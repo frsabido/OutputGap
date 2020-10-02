@@ -1663,11 +1663,23 @@ ui <- dashboardPage(
                         )
                ),
                tabPanel("Remix",
-                        fluidRow(width=12,h2("Unemployment Rate which makes OG=0")),
                         fluidRow(width=12,
-                                 valueBoxOutput("ofanchor",width=2),
+                                 h2("Unemployment Rate which makes OG=0",style="margin-left:10px;"),
+                                 textOutput("ofanchor"),
+                                 tags$head(tags$style("#ofanchor{
+                                 color: red;
+                                 margin-left:10px;
+                                 margin-top:-5px;
+                                 margin-bottom:10px;
+                                 font-size: 20px;
+                                 font-style: italic;
+                                 }"
+                                 ))
+                            ),
+                        fluidRow(width=12,
                                  valueBoxOutput("ofnawru",width=2),
                                  valueBoxOutput("comnawru",width=2),
+                                 valueBoxOutput("propnawru",width=2),
                                  valueBoxOutput("prodfnawru",width=2),
                                  valueBoxOutput("hpnawru",width=2),
                                  valueBoxOutput("biknawru",width=2)
@@ -1680,7 +1692,7 @@ ui <- dashboardPage(
                         tags$iframe(style="height:1000px; width:100%; scrolling=yes", 
                                     src="Paper.pdf")
                         ),
-               tabPanel(downloadButton('code')
+               tabPanel(a("<Code>",href="https://github.com/frsabido/OutputGap",target="_blank")
                )
         )
     )
@@ -1815,16 +1827,18 @@ server <- function(input, output) {
         )
     })
     
-    output$ofanchor<-renderValueBox({
-        valueBox(codigos[codigos$Country==input$bins,"Anchor"],"NAWRU anchor",color="aqua")
-    })
-    
+    output$ofanchor<-renderText({paste0("Commission Anchor was ",codigos[codigos$Country==input$bins,"Anchor"])})
+        
     output$ofnawru<-renderValueBox({
         valueBox(round(nawruofical(valores()),2),"COM data",color="aqua")
     })
     
     output$comnawru<-renderValueBox({
         valueBox(round(nawrucal(datoscom(),valores()),2),"COM Meth value",color="aqua")
+    })
+    
+    output$propnawru<-renderValueBox({
+        valueBox(round(nawrucal(alternative(valores()),valores()),2),"Proposal Meth value",color="aqua")
     })
     
     output$prodfnawru<-renderValueBox({
